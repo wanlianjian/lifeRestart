@@ -58,7 +58,7 @@ class Talent {
         return null;
     }
 
-    talentRandom(include, {times = 0, achievement = 0} = {}) {
+    talentRandom(include, {times = 0, achievement = 0} = {}, includes = []) {
         const rate = { 1:100, 2:10, 3:1, };
         const rateAddition = { 1:1, 2:1, 3:1, };
         const timesRate = getRate('times', times);
@@ -83,6 +83,18 @@ class Talent {
 
         // 1000, 100, 10, 1
         const talentList = {};
+        const includesTalentList = [];
+        console.log('includes', includes);
+        if (includes && includes.length > 0) {
+            for(const talentId in this.#talents) {
+                const { id, grade, name, description } = this.#talents[talentId];
+                if(includes.indexOf(id) <= -1 || id == include) {
+                    continue;
+                }
+                includesTalentList.push({ grade, name, description, id });
+            }
+        }
+        console.log('includesTalentList', includesTalentList);
         for(const talentId in this.#talents) {
             const { id, grade, name, description } = this.#talents[talentId];
             if(id == include) {
@@ -93,16 +105,43 @@ class Talent {
             else talentList[grade].push({ grade, name, description, id });
         }
 
-        return new Array(10)
-            .fill(1).map((v, i)=>{
-                if(!i && include) return include;
-                let grade = randomGrade();
-                while(talentList[grade].length == 0) grade--;
-                const length = talentList[grade].length;
+        // return new Array(10)
+        //     .fill(1).map((v, i)=>{
+        //         if(!i && include) return include;
+        //         let grade = randomGrade();
+        //         while(talentList[grade].length == 0) grade--;
+        //         const length = talentList[grade].length;
 
-                const random = Math.floor(Math.random()*length) % length;
-                return talentList[grade].splice(random,1)[0];
-            });
+        //         const random = Math.floor(Math.random()*length) % length;
+        //         return talentList[grade].splice(random,1)[0];
+        //     });
+
+        let result = [];
+        let length = 20;
+        if(include) {
+            result.push(include);
+            length = length - 1;
+            console.log('include != null，result: ', result);
+        }
+        if (includesTalentList && includesTalentList.length > 0) {
+            result = result.concat(includesTalentList);
+            length = length - includesTalentList.length;
+            console.log('includesTalentList != []，result: ', result);
+        }
+        if(length > 0) {
+            let arr = new Array(length)
+                .fill(1).map((v, i)=>{
+                    let grade = randomGrade();
+                    while(talentList[grade].length == 0) grade--;
+                    const length = talentList[grade].length;
+
+                    const random = Math.floor(Math.random()*length) % length;
+                    return talentList[grade].splice(random,1)[0];
+                });
+            result = result.concat(arr);
+            console.log('length > 0，result: ', result);
+        }
+        return result;
     }
 
     allocationAddition(talents) {

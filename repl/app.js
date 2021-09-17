@@ -317,9 +317,12 @@ class App {
 
         this.#isEnd = false;
         this.#talentSelected.clear();
-        this.#propertyAllocation = {CHR:0,INT:0,STR:0,MNY:0,SPR:5};
+        this.#propertyAllocation = {CHR:0,INT:0,STR:0,MNY:0,SPR:100};
         this.#step = this.Steps.TALENT;
-        this.#randomTalents = this.#life.talentRandom();
+        //1048-神秘小盒子 1144-橙色转盘 1134-转世重修 1114-橙色胶囊（跳过你的60~90岁） 9001-开挂人生（18岁时所有属性+100） 1003-生而为男 1004-生而为女
+        console.log('repl/app.js talentRandom start');
+        this.#randomTalents = this.#life.talentRandom([1048, 1144, 1134, 1114, 9001, 1003, 1004]);
+        console.log('repl/app.js talentRandom end', this.#randomTalents);
         return this.list();
     }
 
@@ -343,8 +346,8 @@ class App {
             const s = this.#randomTalents[number];
             if(!s) return warn(`${number} 为未知天赋`);
             if(this.#talentSelected.has(s)) continue;
-            if(this.#talentSelected.size == 3)
-                return warn('⚠只能选3个天赋');
+            if(this.#talentSelected.size == 6)
+                return warn('⚠只能选6个天赋');
 
             const exclusive = this.#life.exclusive(
                 Array.from(this.#talentSelected).map(({id})=>id),
@@ -389,7 +392,7 @@ class App {
         let description, list, check;
         switch(this.#step) {
             case this.Steps.TALENT:
-                description = '🎉 请选择3个天赋';
+                description = '🎉 请选择6个天赋';
                 list = this.#randomTalents;
                 check = talent=>this.#talentSelected.has(talent);
                 break;
@@ -416,9 +419,9 @@ class App {
         const warn = (a, b) => `${a}\n${this.style('warn', this.style('warn', b))}`;
         switch(this.#step) {
             case this.Steps.TALENT:
-                if(this.#talentSelected.size != 3) return warn(this.list(), `⚠请选择3个天赋`);
+                if(this.#talentSelected.size != 6) return warn(this.list(), `⚠请选择6个天赋`);
                 this.#step = this.Steps.PROPERTY;
-                this.#propertyAllocation.total = 20 + this.#life.getTalentAllocationAddition(
+                this.#propertyAllocation.total = 200 + this.#life.getTalentAllocationAddition(
                     Array.from(this.#talentSelected).map(({id})=>id)
                 );
                 this.#propertyAllocation.TLT = Array.from(this.#talentSelected).map(({id})=>id);
@@ -539,7 +542,7 @@ class App {
                     tempLess>this.#propertyAllocation.total
                     || tempSet < 0
                 ) return  warn('⚠ 不能分配负数属性');
-                if(tempSet>10) return  warn('⚠ 单项属性最高分配10点');
+                if(tempSet>100) return  warn('⚠ 单项属性最高分配100点');
 
                 this.#propertyAllocation[tag] += value;
 
@@ -552,9 +555,9 @@ class App {
 
     random() {
         let t = this.#propertyAllocation.total;
-        const arr = [10, 10, 10, 10];
+        const arr = [100, 100, 100, 100];
         while(t>0) {
-            const sub = Math.round(Math.random() * (Math.min(t, 10) - 1)) + 1;
+            const sub = Math.round(Math.random() * (Math.min(t, 100) - 1)) + 1;
             while(true) {
                 const select = Math.floor(Math.random() * 4) % 4;
                 if(arr[select] - sub <0) continue;
@@ -563,10 +566,10 @@ class App {
                 break;
             }
         }
-        this.#propertyAllocation.CHR = 10 - arr[0];
-        this.#propertyAllocation.INT = 10 - arr[1];
-        this.#propertyAllocation.STR = 10 - arr[2];
-        this.#propertyAllocation.MNY = 10 - arr[3];
+        this.#propertyAllocation.CHR = 100 - arr[0];
+        this.#propertyAllocation.INT = 100 - arr[1];
+        this.#propertyAllocation.STR = 100 - arr[2];
+        this.#propertyAllocation.MNY = 100 - arr[3];
         return this.prop();
     }
 

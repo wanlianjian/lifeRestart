@@ -11,7 +11,7 @@ class App{
     #pages;
     #currentPage;
     #talentSelected = new Set();
-    #totalMax=20;
+    #totalMax=200;
     #isEnd = false;
     #selectedExtendTalent = null;
     #hintTimeout;
@@ -193,9 +193,9 @@ class App{
         const talentPage = $(`
         <div id="main">
             <div class="head" style="font-size: 1.6rem">天赋抽卡</div>
-            <button id="random" class="mainbtn" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"">10连抽！</button>
+            <button id="random" class="mainbtn" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"">20连抽！</button>
             <ul id="talents" class="selectlist"></ul>
-            <button id="next" class="mainbtn">请选择3个</button>
+            <button id="next" class="mainbtn">请选择6个</button>
         </div>
         `);
 
@@ -208,20 +208,23 @@ class App{
             .click(()=>{
                 talentPage.find('#random').hide();
                 const ul = talentPage.find('#talents');
-                this.#life.talentRandom()
-                    .forEach(talent=>{
+                //1048-神秘小盒子 1144-橙色转盘 1134-转世重修 1114-橙色胶囊（跳过你的60~90岁） 9001-开挂人生（18岁时所有属性+100） 1003-生而为男 1004-生而为女
+                console.log('src/app.js talentRandom start');
+                let randomTalents = this.#life.talentRandom([1048, 1144, 1134, 1114, 9001, 1003, 1004]);
+                console.log('src/app.js talentRandom end', randomTalents);
+                randomTalents.forEach(talent=>{
                         const li = createTalent(talent);
                         ul.append(li);
                         li.click(()=>{
                             if(li.hasClass('selected')) {
                                 li.removeClass('selected')
                                 this.#talentSelected.delete(talent);
-                                if(this.#talentSelected.size<3) {
-                                    talentPage.find('#next').text('请选择3个')
+                                if(this.#talentSelected.size<6) {
+                                    talentPage.find('#next').text('请选择6个')
                                 }
                             } else {
-                                if(this.#talentSelected.size==3) {
-                                    this.hint('只能选3个天赋');
+                                if(this.#talentSelected.size==6) {
+                                    this.hint('只能选6个天赋');
                                     return;
                                 }
 
@@ -240,7 +243,7 @@ class App{
                                 }
                                 li.addClass('selected');
                                 this.#talentSelected.add(talent);
-                                if(this.#talentSelected.size==3) {
+                                if(this.#talentSelected.size==6) {
                                     talentPage.find('#next').text('开始新人生')
                                 }
                             }
@@ -252,12 +255,12 @@ class App{
         talentPage
             .find('#next')
             .click(()=>{
-                if(this.#talentSelected.size!=3) {
-                    this.hint('请选择3个天赋');
+                if(this.#talentSelected.size!=6) {
+                    this.hint('请选择6个天赋');
                     return;
                 }
                 talentPage.find('#next').hide()
-                this.#totalMax = 20 + this.#life.getTalentAllocationAddition(Array.from(this.#talentSelected).map(({id})=>id));
+                this.#totalMax = 200 + this.#life.getTalentAllocationAddition(Array.from(this.#talentSelected).map(({id})=>id));
                 this.switch('property');
             })
 
@@ -340,10 +343,10 @@ class App{
             return {group, get, set};
         }
 
-        groups.CHR = getBtnGroups("颜值", 0, 10); // 颜值 charm CHR
-        groups.INT = getBtnGroups("智力", 0, 10); // 智力 intelligence INT
-        groups.STR = getBtnGroups("体质", 0, 10); // 体质 strength STR
-        groups.MNY = getBtnGroups("家境", 0, 10); // 家境 money MNY
+        groups.CHR = getBtnGroups("颜值", 0, 100); // 颜值 charm CHR
+        groups.INT = getBtnGroups("智力", 0, 100); // 智力 intelligence INT
+        groups.STR = getBtnGroups("体质", 0, 100); // 体质 strength STR
+        groups.MNY = getBtnGroups("家境", 0, 100); // 家境 money MNY
 
         const ul = propertyPage.find('#propertyAllocation');
 
@@ -355,9 +358,9 @@ class App{
             .find('#random')
             .click(()=>{
                 let t = this.#totalMax;
-                const arr = [10, 10, 10, 10];
+                const arr = [100, 100, 100, 100];
                 while(t>0) {
-                    const sub = Math.round(Math.random() * (Math.min(t, 10) - 1)) + 1;
+                    const sub = Math.round(Math.random() * (Math.min(t, 100) - 1)) + 1;
                     while(true) {
                         const select = Math.floor(Math.random() * 4) % 4;
                         if(arr[select] - sub <0) continue;
@@ -366,10 +369,10 @@ class App{
                         break;
                     }
                 }
-                groups.CHR.set(10 - arr[0]);
-                groups.INT.set(10 - arr[1]);
-                groups.STR.set(10 - arr[2]);
-                groups.MNY.set(10 - arr[3]);
+                groups.CHR.set(100 - arr[0]);
+                groups.INT.set(100 - arr[1]);
+                groups.STR.set(100 - arr[2]);
+                groups.MNY.set(100 - arr[3]);
             });
 
         propertyPage
@@ -405,8 +408,11 @@ class App{
             <ul id="lifeProperty" class="lifeProperty"></ul>
             <ul id="lifeTrajectory" class="lifeTrajectory"></ul>
             <div class="btn-area">
-                <button id="auto" class="mainbtn">自动播放</button>
-                <button id="auto2x" class="mainbtn">自动播放2x</button>
+                <button id="auto" class="mainbtn">1x</button>
+                <button id="auto2x" class="mainbtn">2x</button>
+                <button id="auto5x" class="mainbtn">5x</button>
+                <!-- <button id="auto10x" class="mainbtn">10x</button> -->
+                <button id="auto50x" class="mainbtn">50x</button>
                 <button id="summary" class="mainbtn">人生总结</button>
                 <button id="domToImage" class="mainbtn">人生回放</button>
             </div>
@@ -442,6 +448,9 @@ class App{
                     trajectoryPage.find('#summary').show();
                     trajectoryPage.find('#auto').hide();
                     trajectoryPage.find('#auto2x').hide();
+                    trajectoryPage.find('#auto5x').hide();
+                    //trajectoryPage.find('#auto10x').hide();
+                    trajectoryPage.find('#auto50x').hide();
                     // trajectoryPage.find('#domToImage').show();
                 }
                 const property = this.#life.getLastRecord();
@@ -511,6 +520,15 @@ class App{
         trajectoryPage
             .find('#auto2x')
             .click(()=>auto(500));
+        trajectoryPage
+            .find('#auto5x')
+            .click(()=>auto(200));
+        // trajectoryPage
+        //     .find('#auto10x')
+        //     .click(()=>auto(100));
+        trajectoryPage
+            .find('#auto50x')
+            .click(()=>auto(20));
 
         // Summary
         const summaryPage = $(`
@@ -539,7 +557,7 @@ class App{
                 this.#life.talentExtend(this.#selectedExtendTalent);
                 this.#selectedExtendTalent = null;
                 this.#talentSelected.clear();
-                this.#totalMax = 20;
+                this.#totalMax = 200;
                 this.#isEnd = false;
                 this.switch('index');
             });
@@ -669,7 +687,7 @@ class App{
                     this.#currentPage = 'talent';
                     talentPage.find('ul.selectlist').empty();
                     talentPage.find('#random').show();
-                    this.#totalMax = 20;
+                    this.#totalMax = 200;
                 },
             },
             property: {
@@ -698,6 +716,9 @@ class App{
                     trajectoryPage.find('#summary').hide();
                     trajectoryPage.find('#auto').show();
                     trajectoryPage.find('#auto2x').show();
+                    trajectoryPage.find('#auto5x').show();
+                    //trajectoryPage.find('#auto10x').show();
+                    trajectoryPage.find('#auto50x').show();
                     this.#isEnd = false;
                 },
                 born: contents => {

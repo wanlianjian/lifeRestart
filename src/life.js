@@ -127,10 +127,10 @@ class Life {
         );
     }
 
-    talentRandom() {
+    talentRandom(includes = []) {
         const times = this.#property.get(this.#property.TYPES.TMS);
         const achievement = this.#property.get(this.#property.TYPES.CACHV);
-        return this.#talent.talentRandom(this.getLastExtendTalent(), { times, achievement });
+        return this.#talent.talentRandom(this.getLastExtendTalent(), { times, achievement }, includes);
     }
 
     talentExtend(talentId) {
