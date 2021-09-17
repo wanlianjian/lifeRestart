@@ -117,16 +117,14 @@ class Talent {
         //     });
 
         let result = [];
-        let length = 20;
+        let length = 30;
         if(include) {
             result.push(include);
             length = length - 1;
             console.log('include != null，result: ', result);
         }
         if (includesTalentList && includesTalentList.length > 0) {
-            result = result.concat(includesTalentList);
             length = length - includesTalentList.length;
-            console.log('includesTalentList != []，result: ', result);
         }
         if(length > 0) {
             let arr = new Array(length)
@@ -140,6 +138,10 @@ class Talent {
                 });
             result = result.concat(arr);
             console.log('length > 0，result: ', result);
+        }
+        if (includesTalentList && includesTalentList.length > 0) {
+            result = result.concat(includesTalentList);
+            console.log('includesTalentList != []，result: ', result);
         }
         return result;
     }

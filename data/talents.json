@@ -1335,15 +1335,36 @@
     "9001": {
         "id": 9001,
         "name": "开挂人生",
-        "description": "18岁时所有属性+100，快乐+1000，家境+1000",
+        "description": "18岁时所有属性+10",
         "condition": "AGE?[18]",
         "grade": 3,
         "effect": {
-            "SPR": 1000,
-            "MNY": 1000,
-            "CHR": 1000,
-            "STR": 100,
-            "INT": 100
+            "SPR": 10,
+            "MNY": 10,
+            "CHR": 10,
+            "STR": 10,
+            "INT": 10
+        }
+    },
+    "9002": {
+        "id": 9002,
+        "name": "位面之子",
+        "description": "初始可用属性点+20",
+        "grade": 3,
+        "status": 20
+    },
+    "9003": {
+        "id": 9003,
+        "name": "究极进化",
+        "description": "所有属性>10时，所有属性+20",
+        "condition": "(SPR>10)&(MNY>10)&(CHR>10)&(STR>10)&(INT>10)",
+        "grade": 3,
+        "effect": {
+            "SPR": 20,
+            "MNY": 20,
+            "CHR": 20,
+            "STR": 20,
+            "INT": 20
         }
     }
 }

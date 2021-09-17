@@ -11,7 +11,7 @@ class App{
     #pages;
     #currentPage;
     #talentSelected = new Set();
-    #totalMax=200;
+    #totalMax=20;
     #isEnd = false;
     #selectedExtendTalent = null;
     #hintTimeout;
@@ -193,7 +193,7 @@ class App{
         const talentPage = $(`
         <div id="main">
             <div class="head" style="font-size: 1.6rem">天赋抽卡</div>
-            <button id="random" class="mainbtn" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"">20连抽！</button>
+            <button id="random" class="mainbtn" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"">30连抽！</button>
             <ul id="talents" class="selectlist"></ul>
             <button id="next" class="mainbtn">请选择6个</button>
         </div>
@@ -208,9 +208,9 @@ class App{
             .click(()=>{
                 talentPage.find('#random').hide();
                 const ul = talentPage.find('#talents');
-                //1048-神秘小盒子 1144-橙色转盘 1134-转世重修 1114-橙色胶囊（跳过你的60~90岁） 9001-开挂人生（18岁时所有属性+100） 1003-生而为男 1004-生而为女
+                //1048-神秘小盒子 1144-橙色转盘 1134-转世重修 1135-轮回之外 1114-橙色胶囊（跳过你的60~90岁） 9001-开挂人生（18岁时所有属性+100） 1003-生而为男 1004-生而为女
                 console.log('src/app.js talentRandom start');
-                let randomTalents = this.#life.talentRandom([1048, 1144, 1134, 1114, 9001, 1003, 1004]);
+                let randomTalents = this.#life.talentRandom([1003, 1004, 1048, 1144, 1134, 1135, 1114, 9001, 9002, 9003]);
                 console.log('src/app.js talentRandom end', randomTalents);
                 randomTalents.forEach(talent=>{
                         const li = createTalent(talent);
@@ -260,7 +260,7 @@ class App{
                     return;
                 }
                 talentPage.find('#next').hide()
-                this.#totalMax = 200 + this.#life.getTalentAllocationAddition(Array.from(this.#talentSelected).map(({id})=>id));
+                this.#totalMax = 20 + this.#life.getTalentAllocationAddition(Array.from(this.#talentSelected).map(({id})=>id));
                 this.switch('property');
             })
 
@@ -557,7 +557,7 @@ class App{
                 this.#life.talentExtend(this.#selectedExtendTalent);
                 this.#selectedExtendTalent = null;
                 this.#talentSelected.clear();
-                this.#totalMax = 200;
+                this.#totalMax = 20;
                 this.#isEnd = false;
                 this.switch('index');
             });
@@ -687,7 +687,7 @@ class App{
                     this.#currentPage = 'talent';
                     talentPage.find('ul.selectlist').empty();
                     talentPage.find('#random').show();
-                    this.#totalMax = 200;
+                    this.#totalMax = 20;
                 },
             },
             property: {
